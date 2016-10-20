@@ -16,6 +16,7 @@ class Searchbar extends Component {
 
   handleChange(e) {
     this.setState({value: e.target.value});
+    this.handleSubmit(e.target.value);
   }
 
   render() {

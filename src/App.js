@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Searchbar from './components/Searchbar.js';
+import Article from './components/Article.js';
 import './App.css';
 
+
+let currentTimer;
 
 class App extends Component {
   constructor(props) {
@@ -14,14 +17,28 @@ class App extends Component {
     };
 
     this.fetchArticles = this.fetchArticles.bind(this);
+    this.debouncedFetchArticles = this.debouncedFetchArticles.bind(this);
   }
 
 
-  fetchArticles(searchterm, offset = 0) {
+  debouncedFetchArticles(searchterm, offset = 0) {
+    if (searchterm === '') searchterm = 'wikipedia';
+    
+    currentTimer = {};
+
+    setTimeout(((originalTimer) => {
+      if (originalTimer === currentTimer) {
+        return this.fetchArticles(searchterm, offset);
+      } else {
+        console.log('cancelled');
+      }
+    }).bind(this, currentTimer), 500);
+  }
+
+  fetchArticles(searchterm, offset) {
     return fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${searchterm}&sroffset=${offset}&srlimit=10&srprop=snippet&origin=*&format=json`)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         this.setState({
           articles: res.query.search,
           totalHits: res.query.searchinfo.totalhits
@@ -35,15 +52,13 @@ class App extends Component {
         <div className="App-header">
           <h2>wikisearch</h2>
         </div>
-        <Searchbar submitHandler={this.fetchArticles}/>
-        {this.state.articles.length ?
-          this.state.articles.map((article, i) => {
-            return (
-              <div key={i}>
-                <span className='title'>{article.title}</span><p dangerouslySetInnerHTML={{ __html: article.snippet }}></p>
-              </div>
-            );
-          })
+        <Searchbar submitHandler={this.debouncedFetchArticles}/>
+        {this.state.articles.length
+          ? this.state.articles.map((article, i) => {
+              return (
+                <Article article={article} key={i} />
+              );
+            })
           : <p className='App-intro'>search with searchbar</p>
         }
       </div>
