@@ -1,0 +1,15 @@
+.pagination {
+  display: flex;
+  justify-content: space-around;
+}
+
+button {
+  height: 2rem;
+  width: auto;
+  border-radius: 1rem;
+  padding: 0 0.5rem;
+}
+
+button:focus {
+  outline: none;
+}
