@@ -5,7 +5,6 @@ class Searchbar extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {value: ''};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -15,7 +14,6 @@ class Searchbar extends Component {
   }
 
   handleChange(e) {
-    this.setState({value: e.target.value});
     this.handleSubmit(e.target.value);
   }
 
@@ -23,13 +21,13 @@ class Searchbar extends Component {
     return (
       <form onSubmit={e => {
         e.preventDefault(); 
-        this.handleSubmit(this.state.value);
+        this.handleSubmit(this.props.value);
       }}>  
         <input 
           className='search'
           type='text' 
           autoFocus='true' 
-          value={this.state.value} 
+          value={this.props.value} 
           placeholder='Search here' 
           onChange={this.handleChange}
         />
